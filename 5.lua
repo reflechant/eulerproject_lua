@@ -1,27 +1,64 @@
 #!/usr/bin/env lua
 
-primes = {2, 3, 5, 7, 11, 13, 17, 19}
-factors = {}
+local mt = {
+	__tostring = function (t)
+		return "{"..table.concat(t,",").."}"
+	end
+}
 
-for _, v in ipairs(primes) do
-	table.insert(factors,v,{v})
-end
-
-for i, a in ipairs( {4,6,8,9,10,12,14,15,16,18,20} ) do
-	for j, v in ipairs(primes) do
-		if a%v == 0 then
-			while not (a%v==0) or a>0 do
-				a = a / v
-				table.insert(factors,a,{v})
-			end
+local function rangegen ()
+	local x = 0
+	return function ()
+		while x < 21 do
+			x = x + 1
+			return x
 		end
 	end
 end
 
-for i, v in ipairs(factors) do
-	io.write(i.."|")
-	for j, u in ipairs(v) do
-		io.write(u.."")
+local function divtimes (n,x)
+	local t = 0
+	while n%x == 0 do
+		n = n / x
+		t = t + 1
 	end
-	io.write("\n")
+	if t == 0 then t = nil end
+	return t,n
 end
+
+local function getFactors (n,gen)
+	local F = {}
+	local pr = gen()
+	
+	while n>1 do
+		local x = pr()
+		F[x],n = divtimes(n,x)
+	end
+	setmetatable(F,mt)
+	print(F)
+	return F
+end
+
+local function divisible_by_all (factors)
+	local keys = {}
+	for k,_ in pairs(factors) do
+		table.insert(keys,k)
+	end
+	table.sort(keys)
+	for i,v in ipairs(keys) do
+		if i ~= v then return false end
+	end
+	return true
+end
+
+local function main ()
+	local i = 2  
+	while true do
+		if divisible_by_all( getFactors(i,rangegen) ) then
+			return i
+		end
+		i = i + 1
+	end
+end
+
+print( main() )
