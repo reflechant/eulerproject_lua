@@ -1,18 +1,18 @@
 #!/usr/bin/env lua
 
 
---[[local mt = {
+local mt = {
 	__tostring = function (t)
 
-		keys = {}
+		--[[keys = {}
 		for k,_ in pairs(t) do
 			table.insert(keys,k)
 		end
 		table.sort(keys)
-		
+		]]--
 		return "{"..table.concat(t,",").."}"
 	end
-}]]--
+}
 
 local function isPrime (x,pt)
 	for _,v in ipairs(pt) do
